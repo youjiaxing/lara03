@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Arr;
 
 class Handler extends ExceptionHandler
 {
@@ -29,7 +30,8 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Exception  $exception
+     * @param \Exception $exception
+     *
      * @return void
      */
     public function report(Exception $exception)
@@ -40,12 +42,49 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param \Illuminate\Http\Request $request
+     * @param \Exception               $exception
+     *
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * Convert the given exception to an array.
+     *
+     * @param \Exception $e
+     *
+     * @return array
+     */
+    protected function convertExceptionToArray(Exception $e)
+    {
+        $statusCode = $this->isHttpException($e) ? $e->getStatusCode() : 500;
+
+        $resp = [
+            'code' => $statusCode,
+            'data' => [],
+            // 'code' => 0,
+        ];
+
+        if (config('app.debug')) {
+            $resp['message'] = $e->getMessage();
+            $resp['debug'] = [
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => collect($e->getTrace())->map(
+                    function ($trace) {
+                        return Arr::except($trace, ['args']);
+                    }
+                )->all(),
+            ];
+        } else {
+            $resp['message'] = $this->isHttpException($e) ? $e->getMessage() : 'Server Error';
+        }
+
+        return $resp;
     }
 }
