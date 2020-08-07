@@ -50,3 +50,25 @@ function model_plural_name($model)
     // 获取子串的复数形式，例如：传参 `user` 会得到 `users`
     return Str::plural($snake_case_name);
 }
+
+
+/**
+ * @param array  $data
+ * @param string $msg
+ * @param int    $code
+ * @param array  $headers
+ *
+ * @return \Illuminate\Http\JsonResponse
+ */
+function json_success(array $data = [], string $msg = "", int $code = 200, $headers = [])
+{
+    return response()->json(
+        [
+            'code' => $code,
+            'data' => $data,
+            'message' => $msg,
+        ],
+        $code,
+        $headers
+    );
+}

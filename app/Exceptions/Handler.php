@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -66,7 +67,6 @@ class Handler extends ExceptionHandler
         $resp = [
             'code' => $statusCode,
             'data' => [],
-            // 'code' => 0,
         ];
 
         if (config('app.debug')) {
@@ -86,5 +86,25 @@ class Handler extends ExceptionHandler
         }
 
         return $resp;
+    }
+
+    /**
+     * Convert a validation exception into a JSON response.
+     *
+     * @param \Illuminate\Http\Request                   $request
+     * @param \Illuminate\Validation\ValidationException $exception
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function invalidJson($request, ValidationException $exception)
+    {
+        return response()->json(
+            [
+                'code' => $exception->status,
+                'message' => $exception->getMessage(),
+                'data' => $exception->errors(),
+            ],
+            $exception->status
+        );
     }
 }

@@ -2,39 +2,39 @@
 
 namespace App\Models;
 
+use Auth;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
-use Auth;
 use Spatie\Permission\Traits\HasRoles;
 
 
 /**
  * App\Models\User
  *
- * @property int $id
- * @property string $name
- * @property string $email
- * @property \Illuminate\Support\Carbon|null $email_verified_at
- * @property string $password
- * @property string|null $remember_token
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $avatar
- * @property string|null $introduction
- * @property int $notification_count
- * @property string|null $last_actived_at
+ * @property int                                                                                                            $id
+ * @property string                                                                                                         $name
+ * @property string                                                                                                         $email
+ * @property \Illuminate\Support\Carbon|null                                                                                $email_verified_at
+ * @property string                                                                                                         $password
+ * @property string|null                                                                                                    $remember_token
+ * @property \Illuminate\Support\Carbon|null                                                                                $created_at
+ * @property \Illuminate\Support\Carbon|null                                                                                $updated_at
+ * @property string|null                                                                                                    $avatar
+ * @property string|null                                                                                                    $introduction
+ * @property int                                                                                                            $notification_count
+ * @property string|null                                                                                                    $last_actived_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[] $permissions
- * @property-read int|null $permissions_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Reply[] $replies
- * @property-read int|null $replies_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[] $roles
- * @property-read int|null $roles_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Topic[] $topics
- * @property-read int|null $topics_count
+ * @property-read int|null                                                                                                  $notifications_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Permission[]                           $permissions
+ * @property-read int|null                                                                                                  $permissions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Reply[]                                              $replies
+ * @property-read int|null                                                                                                  $replies_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Spatie\Permission\Models\Role[]                                 $roles
+ * @property-read int|null                                                                                                  $roles_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Topic[]                                              $topics
+ * @property-read int|null                                                                                                  $topics_count
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User permission($permissions)
@@ -54,7 +54,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements MustVerifyEmailContract
+class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JWTAuth\Contracts\JWTSubject
 {
     use HasRoles;
     use MustVerifyEmailTrait;
@@ -64,6 +64,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
     use Notifiable {
         notify as protected laravelNotify;
     }
+
     public function notify($instance)
     {
         // 如果要通知的人是当前用户，就不必通知了！
@@ -80,11 +81,17 @@ class User extends Authenticatable implements MustVerifyEmailContract
     }
 
     protected $fillable = [
-        'name', 'email', 'password', 'introduction', 'avatar',
+        'name',
+        'email',
+        'password',
+        'introduction',
+        'avatar',
+        'phone',
     ];
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -117,7 +124,6 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         // 如果值的长度等于 60，即认为是已经做过加密的情况
         if (strlen($value) != 60) {
-
             // 不等于 60，做密码加密处理
             $value = bcrypt($value);
         }
@@ -128,12 +134,31 @@ class User extends Authenticatable implements MustVerifyEmailContract
     public function setAvatarAttribute($path)
     {
         // 如果不是 `http` 子串开头，那就是从后台上传的，需要补全 URL
-        if ( ! \Str::startsWith($path, 'http')) {
-
+        if (!\Str::startsWith($path, 'http')) {
             // 拼接完整的 URL
             $path = config('app.url') . "/uploads/images/avatars/$path";
         }
 
         $this->attributes['avatar'] = $path;
+    }
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

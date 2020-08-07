@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\ApiAcceptHeader;
+use App\Http\Middleware\ThrottleRequestsFunc;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -20,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        ApiAcceptHeader::class,
     ];
 
     /**
@@ -45,8 +47,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            ApiAcceptHeader::class,
-            'throttle:60,1',
+            // 'throttle:60,1',
             'bindings',
         ],
     ];
@@ -66,8 +67,9 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'api.accept'=>ApiAcceptHeader::class,
     ];
 
     /**

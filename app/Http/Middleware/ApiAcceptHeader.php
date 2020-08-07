@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Str;
 
 class ApiAcceptHeader
 {
@@ -16,6 +17,10 @@ class ApiAcceptHeader
      */
     public function handle($request, Closure $next)
     {
+        if (!Str::startsWith($request->path(), 'api/')) {
+            return $next($request);
+        }
+
         $defaultType = "application/json";
         $allowTypes = ["json", "xml"];
         $needModified = true;

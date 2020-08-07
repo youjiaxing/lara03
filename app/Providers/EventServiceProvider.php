@@ -6,6 +6,8 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use SocialiteProviders\Manager\SocialiteWasCalled;
+use SocialiteProviders\Weixin\WeixinExtendSocialite;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,10 @@ class EventServiceProvider extends ServiceProvider
         \Illuminate\Auth\Events\Verified::class => [
             \App\Listeners\EmailVerified::class,
         ],
+
+        SocialiteWasCalled::class => [
+            WeixinExtendSocialite::class . '@handle',
+        ]
     ];
 
     /**
