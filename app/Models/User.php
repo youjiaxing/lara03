@@ -53,6 +53,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $phone 手机号
+ * @property string|null $weixin_openid
+ * @property string|null $weixin_unionid
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePhone($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinOpenid($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinUnionid($value)
  */
 class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JWTAuth\Contracts\JWTSubject
 {
@@ -87,6 +93,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JW
         'introduction',
         'avatar',
         'phone',
+        'weixin_openid',
     ];
 
     protected $hidden = [

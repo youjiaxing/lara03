@@ -72,3 +72,9 @@ function json_success(array $data = [], string $msg = "", int $code = 200, $head
         $headers
     );
 }
+
+function re_phone($full = true)
+{
+    $base = '[0-9][1-9]{10}';
+    return $full ? '/^' . $base . '$/' : $base;
+}

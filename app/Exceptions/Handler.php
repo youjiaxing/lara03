@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -98,13 +99,33 @@ class Handler extends ExceptionHandler
      */
     protected function invalidJson($request, ValidationException $exception)
     {
+        return $this->errJson($exception->getMessage(), $exception->status, $exception->errors());
+    }
+
+    /**
+     * Convert an authentication exception into a response.
+     *
+     * @param \Illuminate\Http\Request                 $request
+     * @param \Illuminate\Auth\AuthenticationException $exception
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        return $request->expectsJson()
+            ? $this->errJson($exception->getMessage(), 401)
+            : redirect()->guest($exception->redirectTo() ?? route('login'));
+    }
+
+    protected function errJson($message = "unknown error", $status = 400, $data = [])
+    {
         return response()->json(
             [
-                'code' => $exception->status,
-                'message' => $exception->getMessage(),
-                'data' => $exception->errors(),
+                'code' => $status,
+                'message' => $message,
+                'data' => $data,
             ],
-            $exception->status
+            $status
         );
     }
 }
