@@ -15,12 +15,12 @@ class EasySmsProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(EasySms::class, function ($app) {
-            $smsConfig = config('easysms.config');
+            $smsConfig = config('easysms');
             if ($smsConfig['debug']) {
                 $smsConfig['config']['default']['gateways'] = ['errorlog'];
             }
 
-            return new EasySms($smsConfig);
+            return new EasySms($smsConfig['config']);
         });
         $this->app->alias(EasySms::class, 'easysms');
     }

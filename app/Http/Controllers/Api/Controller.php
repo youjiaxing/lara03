@@ -15,4 +15,6 @@ class Controller extends \App\Http\Controllers\Controller
     {
         return json_success($data, $msg, $code, $this->headers);
     }
+
+    // public function
 }

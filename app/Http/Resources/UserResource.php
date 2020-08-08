@@ -26,6 +26,7 @@ class UserResource extends JsonResource
             'introduction' => $data->introduction,
             'notification_count' => $data->notification_count,
             'last_actived_at' => $data->last_actived_at,
+            'weixin_openid' => $data->weixin_openid,
         ];
     }
 }

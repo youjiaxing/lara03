@@ -11,22 +11,39 @@
 |
 */
 
-Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(function () {
-    Route::middleware('throttle:' . config('api.rate_limit.sign'))->group(function () {
-        // 获取短信验证码
-        Route::post('/captcha/sms', 'CaptchaController@storeSms');
-        // 用户注册 - 手机号
-        Route::post('/register/phone', 'AuthController@registerByPhone');
-    });
+Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
+    function () {
+        Route::middleware('throttle:' . config('api.rate_limit.sign'))->group(
+            function () {
+                // 获取短信验证码
+                Route::post('/captcha/sms', 'CaptchaController@storeSms');
+                // 用户注册 - 手机号
+                Route::post('/auth/register/phone', 'AuthController@registerByPhone');
+            }
+        );
 
-    Route::middleware('throttle:' . config('api.rate_limit.default'))->group(function () {
-        // 获取图形验证码
-        Route::post('/captcha/img', 'CaptchaController@storeImg');
-    });
+        Route::middleware('throttle:' . config('api.rate_limit.default'))->group(
+            function () {
+                // 获取图形验证码
+                Route::post('/captcha/img', 'CaptchaController@storeImg');
 
-    Route::middleware("auth:api")->group(function () {
-        Route::get("/test", function () {
-            return json_success([], "test ok");
-        });
-    });
-});
+                // 第三方登录
+                Route::post('/social/{social}', 'AuthController@socialLogin')->where('social', 'weixin');
+
+                // 非第三方登录
+                Route::post('/auth', 'AuthController@login');
+
+                // 刷新 access_token
+                Route::post('/auth/refresh', 'AuthController@refresh');
+
+                Route::middleware("auth:api")->group(
+                    function () {
+                        // 登出
+                        Route::delete('/auth/logout', 'AuthController@logout');
+
+                    }
+                );
+            }
+        );
+    }
+);
