@@ -5,7 +5,7 @@ namespace App\Http\Requests\Api;
 use App\Exceptions\CaptchaVerifyException;
 use App\Services\ImageCaptchaService;
 
-class SmsCaptchaRequest extends \App\Http\Requests\Request
+class SmsCaptchaRequest extends \App\Http\Requests\BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.

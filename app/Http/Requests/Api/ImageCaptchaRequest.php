@@ -3,7 +3,7 @@ namespace App\Http\Requests\Api;
 
 use Illuminate\Validation\Rule;
 
-class ImageCaptchaRequest extends \App\Http\Requests\Request
+class ImageCaptchaRequest extends \App\Http\Requests\BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.

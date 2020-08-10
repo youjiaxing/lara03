@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class ReplyRequest extends Request
+class ReplyRequest extends BaseRequest
 {
     public function rules()
     {
