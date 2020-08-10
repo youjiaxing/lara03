@@ -13,6 +13,7 @@
 
 Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
     function () {
+        // 限流--登录
         Route::middleware('throttle:' . config('api.rate_limit.sign'))->group(
             function () {
                 // 获取短信验证码
@@ -22,6 +23,7 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
             }
         );
 
+        // 限流--普通
         Route::middleware('throttle:' . config('api.rate_limit.default'))->group(
             function () {
                 // 获取图形验证码
@@ -43,7 +45,14 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
                         // 登出
                         Route::delete('/auth/logout', 'AuthController@logout');
 
+                        // 获取个人资料
                         Route::get('/user', 'UserController@me');
+                        // 更新个人资料
+                        Route::patch('/user', 'UserController@update');
+
+                        // 上传图片
+                        Route::post('/images', 'UploadController@storeImage');
+
                     }
                 );
             }

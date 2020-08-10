@@ -93,7 +93,7 @@ class TopicsController extends Controller
             $result = $uploader->save($request->upload_file, 'topics', \Auth::id(), 1024);
             // 图片保存成功的话
             if ($result) {
-                $data['file_path'] = $result['path'];
+                $data['file_path'] = $result['url'];
                 $data['msg']       = "上传成功!";
                 $data['success']   = true;
             }
