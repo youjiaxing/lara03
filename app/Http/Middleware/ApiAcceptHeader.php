@@ -21,6 +21,9 @@ class ApiAcceptHeader
             return $next($request);
         }
 
+        // 设置当前默认 guard
+        config(['auth.defaults.guard', 'api']);
+
         $defaultType = "application/json";
         $allowTypes = ["json", "xml"];
         $needModified = true;

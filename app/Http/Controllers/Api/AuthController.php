@@ -10,7 +10,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\AuthRequest;
 use App\Http\Requests\Api\RegisterByPhoneRequest;
 use App\Http\Requests\Api\SocialRequest;
-use App\Http\Requests\Request;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\SocialService;
@@ -32,7 +31,7 @@ class AuthController extends Controller
         return $this->success(
             [
                 'token' => $token,
-                'user' => new UserResource($user),
+                'user' => (new UserResource($user))->showSensitive(true),
             ]
         );
     }
@@ -58,7 +57,7 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['key' => [trans('auth.failed')]]);
         }
 
-        return $this->responseToken($token);
+        return $this->responseToken($token, auth('api')->user());
     }
 
     public function refresh()
@@ -79,16 +78,21 @@ class AuthController extends Controller
         $token = $request->input('code');
         $user = $socialService->login($social, $token);
         $token = \Auth::guard('api')->login($user);
-        return $this->responseToken($token);
+        return $this->responseToken($token, $user);
     }
 
-    protected function responseToken($token)
+    protected function responseToken($token, User $user = null)
     {
+        $data = [
+            'token' => $token,
+            'token_ttl' => \Auth::guard('api')->factory()->getTTL() * 60,
+        ];
+        if ($user) {
+            $data['user'] = (new UserResource($user))->showSensitive(true);
+        }
+
         return $this->success(
-            [
-                'token' => $token,
-                'token_ttl' => \Auth::guard('api')->factory()->getTTL() * 60,
-            ]
+            $data
         );
     }
 }

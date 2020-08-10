@@ -2,10 +2,13 @@
 
 namespace App\Http\Resources;
 
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    protected $showSensitive = false;
+
     /**
      * Transform the resource into an array.
      *
@@ -14,19 +17,25 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        /* @var \App\Models\User $data */
-        $data = $this;
+        $data = parent::toArray($request);
 
-        return [
-            'id' => $data->id,
-            'name' => $data->name,
-            'email' => $data->email,
-            'created_at' => $data->created_at->toDateTimeString(),
-            'avatar' => $data->avatar,
-            'introduction' => $data->introduction,
-            'notification_count' => $data->notification_count,
-            'last_actived_at' => $data->last_actived_at,
-            'weixin_openid' => $data->weixin_openid,
-        ];
+        /* @var User $that*/
+        $that = $this->resource;
+        $data['last_actived_at'] = $that->last_actived_at->toDateTimeString();
+        $data['bound_phone'] = $that->phone ? true : false;
+        $data['bound_wechat'] = $that->weixin_openid ? true : false;
+        $data['bound_email'] = $that->email ? true : false;
+
+        if ($this->showSensitive) {
+            $data['phone'] = $that->phone;
+            $data['email'] = $that->email;
+        }
+        return $data;
+    }
+
+    public function showSensitive($show = true)
+    {
+        $this->showSensitive = $show;
+        return $this;
     }
 }

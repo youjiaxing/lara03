@@ -60,7 +60,7 @@ function model_plural_name($model)
  *
  * @return \Illuminate\Http\JsonResponse
  */
-function json_success(array $data = [], string $msg = "", int $code = 200, $headers = [])
+function json_success($data = [], string $msg = "", int $code = 200, $headers = [])
 {
     return response()->json(
         [
