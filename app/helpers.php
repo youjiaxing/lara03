@@ -62,6 +62,15 @@ function model_plural_name($model)
  */
 function json_success($data = [], string $msg = "", int $code = 200, $headers = [])
 {
+    // ResourceCollection 保留分页的 meta 和 links 信息
+    if ($data instanceof \Illuminate\Http\Resources\Json\ResourceCollection){
+        // 让 ResourceCollection 所有数据在 'data' 字段下
+        // $data = $data->toResponse(request())->getData(true);
+
+        // meta 和 links 作为顶级字段, data 仅包含 collection 的有效数据(不包含元数据)
+        return $data->additional(['message' => $msg, 'code' => $code])->toResponse(request())->setStatusCode($code)->withHeaders($headers);
+    }
+
     return response()->json(
         [
             'code' => $code,

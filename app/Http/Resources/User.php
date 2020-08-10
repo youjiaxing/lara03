@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\User;
+use App\Models\User as UserModel;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class User extends JsonResource
 {
     protected $showSensitive = false;
 
@@ -19,7 +19,7 @@ class UserResource extends JsonResource
     {
         $data = parent::toArray($request);
 
-        /* @var User $that*/
+        /* @var UserModel $that*/
         $that = $this->resource;
         $data['last_actived_at'] = $that->last_actived_at->toDateTimeString();
         $data['bound_phone'] = $that->phone ? true : false;

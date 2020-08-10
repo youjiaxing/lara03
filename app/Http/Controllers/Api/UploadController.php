@@ -4,9 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Handlers\ImageUploadHandler;
 use App\Http\Requests\Api\UploadImageRequest;
-use App\Http\Resources\ImageResource;
+use App\Http\Resources\Image as ImageResource;
 use App\Models\Image;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class UploadController extends Controller
