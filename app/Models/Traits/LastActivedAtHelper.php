@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Redis;
 
 trait LastActivedAtHelper
 {
+    protected static $lastActivedAtCached = [];
+    protected static $isLastActivedAtCached = true;
+
     // 缓存相关
     protected $hash_prefix = 'larabbs_last_actived_at_';
     protected $field_prefix = 'user_';
@@ -52,22 +55,34 @@ trait LastActivedAtHelper
 
     public function getLastActivedAtAttribute($value)
     {
+        // 字段名称，如：user_1
+        $field = $this->getHashField();
+
+        if (static::$isLastActivedAtCached && isset(static::$lastActivedAtCached[$field])) {
+            return static::$lastActivedAtCached[$field];
+        }
+
         // 获取今日对应的哈希表名称
         $hash = $this->getHashFromDateString(Carbon::now()->toDateString());
 
-        // 字段名称，如：user_1
-        $field = $this->getHashField();
 
         // 三元运算符，优先选择 Redis 的数据，否则使用数据库中
         $datetime = Redis::hGet($hash, $field) ? : $value;
 
+
         // 如果存在的话，返回时间对应的 Carbon 实体
         if ($datetime) {
-            return new Carbon($datetime);
+            $ret =  new Carbon($datetime);
         } else {
         // 否则使用用户注册时间
-            return $this->created_at;
+            $ret = $this->created_at;
         }
+
+        if (static::$isLastActivedAtCached) {
+            static::$lastActivedAtCached[$field] = $ret;
+        }
+
+        return $ret;
     }
 
     public function getHashFromDateString($date)

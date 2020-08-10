@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Category wherePostCount($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Topic[] $topics
+ * @property-read int|null $topics_count
  */
 class Category extends Model
 {
@@ -27,4 +29,9 @@ class Category extends Model
     protected $fillable = [
         'name', 'description',
     ];
+
+    public function topics()
+    {
+        return $this->hasMany(Topic::class, 'category_id', 'id');
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Http;
 
 use App\Http\Middleware\ApiAcceptHeader;
-use App\Http\Middleware\ThrottleRequestsFunc;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Api\UserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User as UserResource;
 use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,12 +13,18 @@ class UserController extends Controller
 {
     function show(User $user)
     {
-        return $this->success(new UserResource($user));
+        return $this->success(UserResource::make($user));
     }
 
     function me(Request $request)
     {
         return $this->success(UserResource::make(\Auth::user())->showSensitive(true));
+    }
+
+    function activeList()
+    {
+        $users = (new User())->getActiveUsers();
+        return $this->success(UserResource::collection($users));
     }
 
     function update(UserRequest $request)

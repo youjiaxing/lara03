@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Image whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Image whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\Image whereUserId($value)
+ * @property-read mixed $url
+ * @property-read \App\Models\User $user
  */
 class Image extends Model
 {

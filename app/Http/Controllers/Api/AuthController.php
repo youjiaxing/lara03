@@ -10,7 +10,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Requests\Api\AuthRequest;
 use App\Http\Requests\Api\RegisterByPhoneRequest;
 use App\Http\Requests\Api\SocialRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\User as UserResource;
 use App\Models\User;
 use App\Services\SocialService;
 use Illuminate\Validation\ValidationException;
@@ -31,7 +31,7 @@ class AuthController extends Controller
         return $this->success(
             [
                 'token' => $token,
-                'user' => (new UserResource($user))->showSensitive(true),
+                'user' => (new User($user))->showSensitive(true),
             ]
         );
     }
@@ -88,7 +88,7 @@ class AuthController extends Controller
             'token_ttl' => \Auth::guard('api')->factory()->getTTL() * 60,
         ];
         if ($user) {
-            $data['user'] = (new UserResource($user))->showSensitive(true);
+            $data['user'] = UserResource::make(new User($user))->showSensitive(true);
         }
 
         return $this->success(
