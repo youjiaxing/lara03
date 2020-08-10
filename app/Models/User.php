@@ -53,9 +53,9 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property string|null $phone 手机号
- * @property string|null $weixin_openid
- * @property string|null $weixin_unionid
+ * @property string|null                                                                                                    $phone 手机号
+ * @property string|null                                                                                                    $weixin_openid
+ * @property string|null                                                                                                    $weixin_unionid
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User wherePhone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinOpenid($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User whereWeixinUnionid($value)
@@ -71,6 +71,32 @@ class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JW
         notify as protected laravelNotify;
     }
 
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'introduction',
+        'avatar',
+        'phone',
+        'weixin_openid',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'weixin_openid',
+        'phone',
+        'email',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    protected $dates = [
+        'last_actived_at',
+    ];
+
     public function notify($instance)
     {
         // 如果要通知的人是当前用户，就不必通知了！
@@ -85,25 +111,6 @@ class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JW
 
         $this->laravelNotify($instance);
     }
-
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'introduction',
-        'avatar',
-        'phone',
-        'weixin_openid',
-    ];
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
 
     public function topics()
     {

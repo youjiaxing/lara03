@@ -11,7 +11,7 @@ class Controller extends \App\Http\Controllers\Controller
 {
     protected $headers = [];
 
-    public function success(array $data = [], string $msg = "", int $code = 200)
+    public function success($data = [], string $msg = "", int $code = 200)
     {
         return json_success($data, $msg, $code, $this->headers);
     }

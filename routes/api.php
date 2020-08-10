@@ -36,11 +36,14 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
                 // 刷新 access_token
                 Route::post('/auth/refresh', 'AuthController@refresh');
 
+                Route::get('/users/{user}', 'UserController@show')->name('users.show');
+
                 Route::middleware("auth:api")->group(
                     function () {
                         // 登出
                         Route::delete('/auth/logout', 'AuthController@logout');
 
+                        Route::get('/user', 'UserController@me');
                     }
                 );
             }
