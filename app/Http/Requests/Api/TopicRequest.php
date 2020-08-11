@@ -18,7 +18,7 @@ class TopicRequest extends \App\Http\Requests\BaseRequest
     {
         $rules = [
             'title' => ['string', 'between:2, 200'],
-            'body' => ['string', 'min:10'],
+            'body' => ['string', 'min:2'],
             'category_id' => ['numeric', 'exists:categories,id'],
         ];
 
