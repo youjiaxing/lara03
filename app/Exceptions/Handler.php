@@ -64,11 +64,15 @@ class Handler extends ExceptionHandler
     protected function convertExceptionToArray(Exception $e)
     {
         $statusCode = $this->isHttpException($e) ? $e->getStatusCode() : 500;
+        $subCode = $this->isHttpException($e) ? $e->getCode() : 0;
 
         $resp = [
             'code' => $statusCode,
+            'sub_code' => $subCode,     // 业务错误码
             'data' => [],
         ];
+
+
 
         if (config('app.debug')) {
             $resp['message'] = $e->getMessage();

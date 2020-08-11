@@ -25,6 +25,6 @@ class UploadController extends Controller
             ]
         );
 
-        return $this->success(new ImageResource($image));
+        return $this->successResponse(new ImageResource($image));
     }
 }

@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Arr;
 
-class Link extends JsonResource
+class Role extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,7 +14,6 @@ class Link extends JsonResource
      */
     public function toArray($request)
     {
-        $data = parent::toArray($request);
-        return Arr::except($data, ['created_at', 'updated_at']);
+        return \Arr::only(parent::toArray($request), ['id', 'name']);
     }
 }

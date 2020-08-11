@@ -16,14 +16,14 @@ class NotificationController extends Controller
         }
 
         $notifications = $query->paginate();
-        return $this->success(Notification::collection($notifications));
+        return $this->successResponse(Notification::collection($notifications));
     }
 
     public function stats()
     {
         $user = \Auth::user();
         $total = $user->notifications()->count();
-        return $this->success(
+        return $this->successResponse(
             [
                 'unread_count' => $user->notification_count,
                 'total' => $total,

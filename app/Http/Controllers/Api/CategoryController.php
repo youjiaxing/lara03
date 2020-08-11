@@ -12,12 +12,12 @@ class CategoryController extends Controller
     function index()
     {
         $categories = Category::all();
-        return $this->success(CategoryResource::collection($categories));
+        return $this->successResponse(CategoryResource::collection($categories));
     }
 
     function show(Category $category, Request $request)
     {
         $topics = $category->topics()->with('category')->paginate();
-        return $this->success(TopicResource::collection($topics));
+        return $this->successResponse(TopicResource::collection($topics));
     }
 }

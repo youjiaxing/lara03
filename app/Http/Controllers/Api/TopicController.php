@@ -16,7 +16,7 @@ class TopicController extends Controller
     function index(User $user = null)
     {
         $builder = QueryBuilder::for(Topic::class)
-            ->allowedIncludes('category', 'user')
+            ->allowedIncludes('category', 'user', 'user.roles')
             ->allowedFilters(
                 [
                     'title',
@@ -30,7 +30,7 @@ class TopicController extends Controller
 
         $topics = $builder->paginate();
 
-        return $this->success(TopicResource::collection($topics));
+        return $this->successResponse(TopicResource::collection($topics));
     }
 
     function indexByUser(User $user)
@@ -41,9 +41,9 @@ class TopicController extends Controller
     function show($topicId)
     {
         $topic = QueryBuilder::for(Topic::class)
-            ->allowedIncludes('user', 'category')
+            ->allowedIncludes('user', 'category', 'roles')
             ->findOrFail($topicId);
-        return $this->success(\App\Http\Resources\Topic::make($topic));
+        return $this->successResponse(\App\Http\Resources\Topic::make($topic));
     }
 
     function store(TopicRequest $request)
@@ -54,7 +54,7 @@ class TopicController extends Controller
         if (!$topic->save()) {
             throw new InternalException("创建 topic 失败");
         }
-        return $this->success(\App\Http\Resources\Topic::make($topic), "", 201);
+        return $this->successResponse(\App\Http\Resources\Topic::make($topic), "", 201);
     }
 
     public function update(TopicRequest $request, Topic $topic)
@@ -69,13 +69,13 @@ class TopicController extends Controller
             throw new \Exception("更新失败");
         }
 
-        return $this->success(\App\Http\Resources\Topic::make($topic));
+        return $this->successResponse(\App\Http\Resources\Topic::make($topic));
     }
 
     public function destroy(Topic $topic)
     {
         $this->authorize('destroy', $topic);
         $topic->delete();
-        return $this->success([], "", 204);
+        return $this->successResponse([], "", 204);
     }
 }

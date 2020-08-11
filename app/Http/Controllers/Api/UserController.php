@@ -13,18 +13,18 @@ class UserController extends Controller
 {
     function show(User $user)
     {
-        return $this->success(UserResource::make($user));
+        return $this->successResponse(UserResource::make($user));
     }
 
     function me(Request $request)
     {
-        return $this->success(UserResource::make(\Auth::user())->showSensitive(true));
+        return $this->successResponse(UserResource::make(\Auth::user())->showSensitive(true));
     }
 
     function activeList()
     {
         $users = (new User())->getActiveUsers();
-        return $this->success(UserResource::collection($users));
+        return $this->successResponse(UserResource::collection($users));
     }
 
     function update(UserRequest $request)
@@ -42,6 +42,6 @@ class UserController extends Controller
             throw new \Exception("更新失败");
         }
 
-        return $this->success(UserResource::make(\Auth::user())->showSensitive(true));
+        return $this->successResponse(UserResource::make(\Auth::user())->showSensitive(true));
     }
 }
