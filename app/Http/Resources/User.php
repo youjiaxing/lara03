@@ -25,6 +25,7 @@ class User extends JsonResource
         $data['bound_phone'] = $that->phone ? true : false;
         $data['bound_wechat'] = $that->weixin_openid ? true : false;
         $data['bound_email'] = $that->email ? true : false;
+        $data['roles'] = Role::collection($this->whenLoaded('roles'));
 
         if ($this->showSensitive) {
             $data['phone'] = $that->phone;

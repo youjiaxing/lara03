@@ -93,6 +93,9 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
                         Route::get('/notifications/stats', 'NotificationController@stats');
                         // 标记消息已读
                         Route::post('/notifications/read', 'NotificationController@readAll');
+
+                        // 查看用户所有权限
+                        Route::get('/user/permissions', 'PermissionController@index');
                     }
                 );
             }

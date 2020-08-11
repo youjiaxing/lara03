@@ -16,7 +16,7 @@ class TopicController extends Controller
     function index(User $user = null)
     {
         $builder = QueryBuilder::for(Topic::class)
-            ->allowedIncludes('category', 'user')
+            ->allowedIncludes('category', 'user', 'user.roles')
             ->allowedFilters(
                 [
                     'title',
@@ -41,7 +41,7 @@ class TopicController extends Controller
     function show($topicId)
     {
         $topic = QueryBuilder::for(Topic::class)
-            ->allowedIncludes('user', 'category')
+            ->allowedIncludes('user', 'category', 'roles')
             ->findOrFail($topicId);
         return $this->success(\App\Http\Resources\Topic::make($topic));
     }
