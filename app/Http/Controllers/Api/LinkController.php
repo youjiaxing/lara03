@@ -9,7 +9,7 @@ class LinkController extends Controller
 {
     function index()
     {
-        $links = Link::all();
-        return $this->success(LinkResource::collection($links));
+        $links = Link::make()->getAllCached();
+        return $this->successResponse(LinkResource::collection($links));
     }
 }

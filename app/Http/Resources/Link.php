@@ -16,6 +16,6 @@ class Link extends JsonResource
     public function toArray($request)
     {
         $data = parent::toArray($request);
-        return Arr::except($data, ['created_at', 'updated_at', 'id']);
+        return Arr::except($data, ['created_at', 'updated_at']);
     }
 }

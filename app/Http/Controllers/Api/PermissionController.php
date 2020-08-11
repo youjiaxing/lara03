@@ -10,6 +10,6 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = \Auth::user()->getAllPermissions();
-        return $this->success(Permission::collection($permissions));
+        return $this->successResponse(Permission::collection($permissions));
     }
 }

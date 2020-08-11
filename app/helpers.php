@@ -55,12 +55,12 @@ function model_plural_name($model)
 /**
  * @param array  $data
  * @param string $msg
- * @param int    $code
+ * @param int    $statusCode
  * @param array  $headers
  *
  * @return \Illuminate\Http\JsonResponse
  */
-function json_success($data = [], string $msg = "", int $code = 200, $headers = [])
+function json_success_response($data = [], string $msg = "", int $statusCode = 200, $headers = [], int $subCode = 0)
 {
     // ResourceCollection 保留分页的 meta 和 links 信息
     if ($data instanceof \Illuminate\Http\Resources\Json\ResourceCollection){
@@ -68,18 +68,24 @@ function json_success($data = [], string $msg = "", int $code = 200, $headers = 
         // $data = $data->toResponse(request())->getData(true);
 
         // meta 和 links 作为顶级字段, data 仅包含 collection 的有效数据(不包含元数据)
-        return $data->additional(['message' => $msg, 'code' => $code])->toResponse(request())->setStatusCode($code)->withHeaders($headers);
+        return $data->additional(['message' => $msg, 'code' => $statusCode])->toResponse(request())->setStatusCode($statusCode)->withHeaders($headers);
     }
 
     return response()->json(
         [
-            'code' => $code,
+            'code' => $statusCode,
+            'sub_code' => $subCode,
             'data' => $data,
             'message' => $msg,
         ],
-        $code,
+        $statusCode,
         $headers
     );
+}
+
+function json_error_response(int $statusCode, string $msg = "", int $subCode = 0, $data = [])
+{
+    return json_success_response($data, $msg, $statusCode, [], $subCode);
 }
 
 function re_phone($full = true)

@@ -42,7 +42,7 @@ class CaptchaController extends Controller
             $resp['code'] = $captcha['code'];
         }
 
-        return $this->success($resp);
+        return $this->successResponse($resp);
     }
 
     /**
@@ -78,6 +78,6 @@ class CaptchaController extends Controller
             $resp['code'] = $code;
         }
 
-        return $this->success($resp);
+        return $this->successResponse($resp);
     }
 }

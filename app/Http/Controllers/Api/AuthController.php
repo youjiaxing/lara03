@@ -28,7 +28,7 @@ class AuthController extends Controller
             ]
         );
         $token = \Auth::guard('api')->login($user);
-        return $this->success(
+        return $this->successResponse(
             [
                 'token' => $token,
                 'user' => (new User($user))->showSensitive(true),
@@ -69,7 +69,7 @@ class AuthController extends Controller
     public function logout()
     {
         \Auth::guard('api')->logout();
-        return $this->success([], "", 204);
+        return $this->successResponse([], "", 204);
     }
 
     // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe575c72d965dec82&redirect_uri=http://lara03.test&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
@@ -91,7 +91,7 @@ class AuthController extends Controller
             $data['user'] = UserResource::make(new User($user))->showSensitive(true);
         }
 
-        return $this->success(
+        return $this->successResponse(
             $data
         );
     }

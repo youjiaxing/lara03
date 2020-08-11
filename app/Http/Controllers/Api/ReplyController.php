@@ -25,21 +25,21 @@ class ReplyController extends Controller
         if (!$reply->save()) {
             throw new \Exception("保存失败");
         }
-        return $this->success(\App\Http\Resources\Reply::make($reply), "", 201);
+        return $this->successResponse(\App\Http\Resources\Reply::make($reply), "", 201);
     }
 
     public function index(Topic $topic)
     {
         $replies = $this->query($topic, null)
             ->paginate();
-        return $this->success(\App\Http\Resources\Reply::collection($replies));
+        return $this->successResponse(\App\Http\Resources\Reply::collection($replies));
     }
 
     public function indexByUser(User $user)
     {
         $replies = $this->query(null, $user)
             ->paginate();
-        return $this->success(\App\Http\Resources\Reply::collection($replies));
+        return $this->successResponse(\App\Http\Resources\Reply::collection($replies));
     }
 
     protected function query(Topic $topic = null, User $user = null)
@@ -67,6 +67,6 @@ class ReplyController extends Controller
 
         $this->authorize('destroy', $reply);
         $reply->delete();
-        return $this->success([], "", 204);
+        return $this->successResponse([], "", 204);
     }
 }
