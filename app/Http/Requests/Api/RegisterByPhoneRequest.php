@@ -9,7 +9,7 @@ namespace App\Http\Requests\Api;
 
 use App\Services\SmsCaptchaService;
 
-class RegisterByPhoneRequest extends \App\Http\Requests\Request
+class RegisterByPhoneRequest extends \App\Http\Requests\BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.

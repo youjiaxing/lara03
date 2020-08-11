@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Http\Requests\Request;
+use App\Http\Requests\BaseRequest;
 
-class UploadImageRequest extends Request
+class UploadImageRequest extends BaseRequest
 {
 
     /**

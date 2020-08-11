@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Http\Requests\Request;
+use App\Http\Requests\BaseRequest;
 use App\Models\Image;
 use Auth;
 use Illuminate\Validation\Rule;
 
-class UserRequest extends Request
+class UserRequest extends BaseRequest
 {
     public function rules()
     {

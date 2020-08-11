@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class TopicRequest extends Request
+class TopicRequest extends BaseRequest
 {
     public function rules()
     {

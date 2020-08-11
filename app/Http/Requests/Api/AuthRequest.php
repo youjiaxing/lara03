@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\Api;
 
-use App\Http\Requests\Request;
+use App\Http\Requests\BaseRequest;
 
-class AuthRequest extends Request
+class AuthRequest extends BaseRequest
 {
 
     /**

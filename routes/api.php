@@ -55,6 +55,10 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
                 // 用户的文章列表
                 Route::get('/users/{user}/topics', 'TopicController@index');
 
+                // 评论
+                Route::get('/topics/{topic}/replies', 'ReplyController@index');
+                Route::get('/users/{user}/replies', 'ReplyController@indexByUser');
+
                 // 推荐链接(PY 交易链接)
                 Route::get('/links', 'LinkController@index');
 
@@ -77,6 +81,18 @@ Route::prefix("v1")->name("api.v1.")->namespace('Api')->group(
                         Route::delete('/topics/{topic}', 'TopicController@destroy');
                         // 修改文章
                         Route::match(['PUT', 'PATCH'], '/topics/{topic}', 'TopicController@update');
+
+                        // 发布回复
+                        Route::post('/topics/{topic}/replies', 'ReplyController@store');
+                        // 删除回复
+                        Route::delete('/topics/{topic}/replies/{reply}', 'ReplyController@destroy');
+
+                        // 查看通知
+                        Route::get('/notifications', 'NotificationController@index');
+                        // 查看未读通知数量
+                        Route::get('/notifications/stats', 'NotificationController@stats');
+                        // 标记消息已读
+                        Route::post('/notifications/read', 'NotificationController@readAll');
                     }
                 );
             }

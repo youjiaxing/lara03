@@ -7,7 +7,7 @@
 
 namespace App\Http\Requests\Api;
 
-class TopicRequest extends \App\Http\Requests\Request
+class TopicRequest extends \App\Http\Requests\BaseRequest
 {
     /**
      * Get the validation rules that apply to the request.
