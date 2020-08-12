@@ -12,8 +12,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Controller extends \App\Http\Controllers\Controller
 {
-    protected $headers = [];
-
     /**
      * @param array  $data
      * @param string $msg
@@ -21,9 +19,9 @@ class Controller extends \App\Http\Controllers\Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function successResponse($data = [], string $msg = "", int $statusCode = 200)
+    public function successResponse($data = [], string $msg = "", int $statusCode = 200, $headers = [])
     {
-        return json_success_response($data, $msg, $statusCode, $this->headers);
+        return json_success_response($data, $msg, $statusCode, $headers);
     }
 
     public function errorResponse(int $statusCode, string $msg = "", int $subCode = 0, $data = [])
