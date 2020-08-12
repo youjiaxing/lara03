@@ -15,7 +15,7 @@ class AuthRequest extends BaseRequest
     public function rules()
     {
         return [
-            'key' => [
+            'username' => [
                 'required',
                 'string',
             ],

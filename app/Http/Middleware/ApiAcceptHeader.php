@@ -22,7 +22,7 @@ class ApiAcceptHeader
         }
 
         // 设置当前默认 guard
-        config(['auth.defaults.guard', 'api']);
+        \Auth::shouldUse('api');
 
         $defaultType = "application/json";
         $allowTypes = ["json", "xml"];

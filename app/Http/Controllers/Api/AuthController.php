@@ -13,10 +13,18 @@ use App\Http\Requests\Api\SocialRequest;
 use App\Http\Resources\User as UserResource;
 use App\Models\User;
 use App\Services\SocialService;
-use Illuminate\Validation\ValidationException;
+use App\Traits\PassportToken;
+use Laminas\Diactoros\Response as Psr7Response;
+use Laravel\Passport\Exceptions\OAuthServerException;
+use Laravel\Passport\Http\Controllers\ConvertsPsrResponses;
+use League\OAuth2\Server\Exception\OAuthServerException as LeagueException;
+use Psr\Http\Message\ServerRequestInterface;
 
 class AuthController extends Controller
 {
+    use ConvertsPsrResponses;
+    use PassportToken;
+
     public function registerByPhone(RegisterByPhoneRequest $request)
     {
         $data = $request->validated();
@@ -27,28 +35,32 @@ class AuthController extends Controller
                 'password' => bcrypt($data['password']),
             ]
         );
-        $token = \Auth::guard('api')->login($user);
-        return $this->successResponse(
-            [
-                'token' => $token,
-                'user' => (new User($user))->showSensitive(true),
-            ]
-        );
+
+        return $this->successResponse([], '', 201);
+
+        // $token = \Auth::login($user);
+        // return $this->successResponse(
+        //     [
+        //         'token' => $token,
+        //         'user' => (new UserResource($user))->showSensitive(true),
+        //     ]
+        // );
     }
 
-    public function login(AuthRequest $request)
+    public function login(AuthRequest $request, \League\OAuth2\Server\AuthorizationServer $authorizationServer, ServerRequestInterface $serverRequest)
     {
+        /*
         $credentials = [
             'password' => $request->input('password'),
         ];
 
-        $key = $request->input('key');
+        $username = $request->input('username');
         // 邮件
-        if (filter_var($key, FILTER_VALIDATE_EMAIL) != false) {
-            $credentials['email'] = $key;
+        if (filter_var($username, FILTER_VALIDATE_EMAIL) != false) {
+            $credentials['email'] = $username;
         } // 手机号
-        elseif (preg_match('/^[1-9][0-9]{10}$/', $key)) {
-            $credentials['phone'] = $key;
+        elseif (preg_match('/^[1-9][0-9]{10}$/', $username)) {
+            $credentials['phone'] = $username;
         } else {
             throw ValidationException::withMessages(['key' => ['格式错误']]);
         }
@@ -58,18 +70,35 @@ class AuthController extends Controller
         }
 
         return $this->responseToken($token, auth('api')->user());
+        */
+
+        try {
+            $psrResponse = $authorizationServer->respondToAccessTokenRequest($serverRequest, new Psr7Response);
+
+            return $this->successResponse(json_decode($psrResponse->getBody(), true), "", 201, $psrResponse->getHeaders());
+        } catch (LeagueException $e) {
+            // return $this->errorResponse($e->getHttpStatusCode(), $e->getMessage(), 0, $e->getTrace());
+            throw new OAuthServerException(
+                $e,
+                $this->convertResponse($e->generateHttpResponse(new Psr7Response))
+            );
+        }
     }
 
-    public function refresh()
+    public function refresh(\League\OAuth2\Server\AuthorizationServer $authorizationServer, ServerRequestInterface $serverRequest)
     {
-        $token = auth('api')->refresh(true);
-        return $this->responseToken($token);
+        // $token = auth('api')->refresh(true);
+        // return $this->responseToken($token);
+
+        return $this->login(new AuthRequest(), $authorizationServer, $serverRequest);
     }
 
     public function logout()
     {
-        \Auth::guard('api')->logout();
-        return $this->successResponse([], "", 204);
+        // \Auth::guard('api')->logout();
+        // return $this->successResponse([], "", 204);
+        \Auth::user()->token()->revoke();
+        return $this->successResponse([], '', 204);
     }
 
     // https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe575c72d965dec82&redirect_uri=http://lara03.test&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect
@@ -77,8 +106,8 @@ class AuthController extends Controller
     {
         $token = $request->input('code');
         $user = $socialService->login($social, $token);
-        $token = \Auth::guard('api')->login($user);
-        return $this->responseToken($token, $user);
+        $tokenData = $this->getBearerTokenByUser($user,"3", false);
+        return $this->successResponse($tokenData);
     }
 
     protected function responseToken($token, User $user = null)

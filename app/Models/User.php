@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 
@@ -67,6 +68,7 @@ class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JW
     use MustVerifyEmailTrait;
     use Traits\ActiveUserHelper;
     use Traits\LastActivedAtHelper;
+    use HasApiTokens;
 
     use Notifiable {
         notify as protected laravelNotify;
@@ -97,6 +99,21 @@ class User extends Authenticatable implements MustVerifyEmailContract, \Tymon\JW
     protected $dates = [
         'last_actived_at',
     ];
+
+    public function findForPassport($username)
+    {
+        $credentials = [];
+        // 邮件
+        if (filter_var($username, FILTER_VALIDATE_EMAIL) != false) {
+            $credentials['email'] = $username;
+        } // 手机号
+        elseif (preg_match('/^[1-9][0-9]{10}$/', $username)) {
+            $credentials['phone'] = $username;
+        } else {
+            return null;
+        }
+        return $this->where($credentials)->first();
+    }
 
     public function notify($instance)
     {
